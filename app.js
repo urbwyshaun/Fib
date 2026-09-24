@@ -1,390 +1,152 @@
 /*
     PLUTO ANALYSIS
-    VERSION 1
-
+    VERSION 2 - SMART SIMULATION
     Educational simulation engine.
-
-    This version does NOT connect to a broker
-    and does NOT execute real trades.
 */
 
-
 const analyzeButton = document.getElementById("analyzeButton");
-
-
 analyzeButton.addEventListener("click", analyzeMarket);
 
+const assetConfigs = {
+    "BTC/USD": { high: 105000, low: 100000, decimals: 2 },
+    "XAU/USD": { high: 2680, low: 2620, decimals: 2 },
+    "EUR/USD": { high: 1.08500, low: 1.07200, decimals: 5 },
+    "GBP/USD": { high: 1.27500, low: 1.26100, decimals: 5 }
+};
 
 function analyzeMarket() {
+    const assetSelect = document.getElementById("asset");
+    const asset = assetSelect.value;
+    const config = assetConfigs[asset] || assetConfigs["BTC/USD"];
 
-    /*
-        VERSION 1 USES SIMULATED CONDITIONS.
+    // Create dynamic conditions - different per pair and per click
+    const baseChance = Math.random();
 
-        Later we can replace these values with
-        historical/live market data.
-    */
+    // Make it so sometimes ALL pass (for demo)
+    const isFullConfirmation = baseChance > 0.65;
 
     const market = {
-
-        direction: "BULLISH",
-
-        fibZone: true,
-
-        liquidityManipulation: true,
-
-        liquiditySweep: true,
-
-        marketStructureShift: true,
-
-        displacement: true,
-
-        secondFibZone: true,
-
-        finalConfirmation: false
-
+        asset: asset,
+        direction: Math.random() > 0.5? "BULLISH" : "BEARISH",
+        fibZone: baseChance > 0.15,
+        liquidityManipulation: baseChance > 0.25,
+        liquiditySweep: baseChance > 0.35,
+        marketStructureShift: baseChance > 0.45,
+        displacement: baseChance > 0.55,
+        secondFibZone: baseChance > 0.60,
+        finalConfirmation: isFullConfirmation,
+        config: config
     };
 
-
     updateTimeframes(market);
-
     updateFibonacci(market);
-
     updateConditions(market);
-
     updateSetup(market);
-
     updatePaperTradeLevels(market);
-
     updateExplanation(market);
 }
 
-
-/*
-    MULTI-TIMEFRAME ANALYSIS
-*/
-
 function updateTimeframes(market) {
-
-    document.getElementById("tf4h").textContent =
-        market.direction;
-
-    document.getElementById("tf1h").textContent =
-        market.direction;
-
-    document.getElementById("tf15m").textContent =
-        market.marketStructureShift
-            ? "STRUCTURE SHIFT"
-            : "WAITING";
-
-    document.getElementById("tf5m").textContent =
-        market.finalConfirmation
-            ? "CONFIRMED"
-            : "WAITING";
+    document.getElementById("tf4h").textContent = market.direction;
+    document.getElementById("tf1h").textContent = market.direction;
+    document.getElementById("tf15m").textContent = market.marketStructureShift? "STRUCTURE SHIFT" : "WAITING";
+    document.getElementById("tf5m").textContent = market.finalConfirmation? "CONFIRMED" : "WAITING";
 }
-
-
-/*
-    MAIN FIBONACCI
-*/
 
 function updateFibonacci(market) {
-
-    const high = 105000;
-
-    const low = 100000;
-
+    const { high, low, decimals } = market.config;
     const range = high - low;
+    const isBullish = market.direction === "BULLISH";
 
+    let fib618, fib809;
+    if (isBullish) {
+        fib618 = high - range * 0.618;
+        fib809 = high - range * 0.809;
+    } else {
+        fib618 = low + range * 0.618;
+        fib809 = low + range * 0.809;
+    }
 
-    /*
-        Bullish Fibonacci:
-
-        0%   = high
-        100% = low
-    */
-
-    const fib618 =
-        high - range * 0.618;
-
-    const fib809 =
-        high - range * 0.809;
-
-
-    document.getElementById("fibDirection")
-        .textContent = market.direction;
-
-
-    document.getElementById("fib0")
-        .textContent = formatPrice(high);
-
-
-    document.getElementById("fib618")
-        .textContent = formatPrice(fib618);
-
-
-    document.getElementById("fib809")
-        .textContent = formatPrice(fib809);
-
-
-    document.getElementById("fib100")
-        .textContent = formatPrice(low);
+    document.getElementById("fibDirection").textContent = market.direction;
+    document.getElementById("fib0").textContent = formatPrice(isBullish? high : low, decimals);
+    document.getElementById("fib618").textContent = formatPrice(fib618, decimals);
+    document.getElementById("fib809").textContent = formatPrice(fib809, decimals);
+    document.getElementById("fib100").textContent = formatPrice(isBullish? low : high, decimals);
 }
-
-
-/*
-    CONFIRMATION ENGINE
-*/
 
 function updateConditions(market) {
-
-    setCondition(
-        "fibCondition",
-        market.fibZone
-    );
-
-
-    setCondition(
-        "liquidityCondition",
-        market.liquidityManipulation
-    );
-
-
-    setCondition(
-        "sweepCondition",
-        market.liquiditySweep
-    );
-
-
-    setCondition(
-        "mssCondition",
-        market.marketStructureShift
-    );
-
-
-    setCondition(
-        "displacementCondition",
-        market.displacement
-    );
-
-
-    setCondition(
-        "secondFibCondition",
-        market.secondFibZone
-    );
-
-
-    setCondition(
-        "finalCondition",
-        market.finalConfirmation
-    );
+    setCondition("fibCondition", market.fibZone);
+    setCondition("liquidityCondition", market.liquidityManipulation);
+    setCondition("sweepCondition", market.liquiditySweep);
+    setCondition("mssCondition", market.marketStructureShift);
+    setCondition("displacementCondition", market.displacement);
+    setCondition("secondFibCondition", market.secondFibZone);
+    setCondition("finalCondition", market.finalConfirmation);
 }
-
 
 function setCondition(id, condition) {
-
     const element = document.getElementById(id);
-
-
-    if (condition) {
-
-        element.textContent = "CONFIRMED";
-
-    } else {
-
-        element.textContent = "WAITING";
-
-    }
+    element.textContent = condition? "CONFIRMED" : "WAITING";
+    element.style.color = condition? "#00ff88" : "#777";
 }
-
-
-/*
-    SETUP STATUS
-*/
 
 function updateSetup(market) {
+    const setupStatus = document.getElementById("setupStatus");
+    const setupIcon = document.getElementById("setupIcon");
+    const setupMessage = document.getElementById("setupMessage");
 
-    const setupStatus =
-        document.getElementById("setupStatus");
+    const allConfirmed = market.fibZone && market.liquidityManipulation && market.liquiditySweep && market.marketStructureShift && market.displacement && market.secondFibZone && market.finalConfirmation;
 
-    const setupIcon =
-        document.getElementById("setupIcon");
-
-    const setupMessage =
-        document.getElementById("setupMessage");
-
-
-    if (
-        market.fibZone &&
-        market.liquidityManipulation &&
-        market.liquiditySweep &&
-        market.marketStructureShift &&
-        market.displacement &&
-        market.secondFibZone &&
-        market.finalConfirmation
-    ) {
-
-        setupStatus.textContent =
-            "CONFIRMED";
-
-        setupIcon.textContent =
-            "✓";
-
-        setupMessage.textContent =
-            "All defined confirmation conditions are satisfied. The setup is confirmed in the simulation.";
-
-    }
-
-    else {
-
-        setupStatus.textContent =
-            "WAITING";
-
-        setupIcon.textContent =
-            "—";
-
-        setupMessage.textContent =
-            "The setup is not fully confirmed. The engine is waiting for the remaining confirmation conditions.";
-
+    if (allConfirmed) {
+        setupStatus.textContent = "CONFIRMED";
+        setupStatus.style.color = "#00ff88";
+        setupIcon.textContent = "✓";
+        setupIcon.style.color = "#00ff88";
+        setupMessage.textContent = `${market.asset} - All conditions satisfied. ${market.direction} setup confirmed in simulation.`;
+    } else {
+        setupStatus.textContent = "WAITING";
+        setupStatus.style.color = "#fff";
+        setupIcon.textContent = "—";
+        setupIcon.style.color = "#fff";
+        setupMessage.textContent = `${market.asset} - ${market.direction} bias. Waiting for remaining confirmations.`;
     }
 }
-
-
-/*
-    PAPER-TRADE LEVELS
-
-    These are demonstration values only.
-*/
 
 function updatePaperTradeLevels(market) {
-
-    const entry =
-        document.getElementById("entry");
-
-    const stopLoss =
-        document.getElementById("stopLoss");
-
-    const target =
-        document.getElementById("target");
-
+    const entry = document.getElementById("entry");
+    const stopLoss = document.getElementById("stopLoss");
+    const target = document.getElementById("target");
+    const { high, low, decimals } = market.config;
 
     if (!market.finalConfirmation) {
-
-        entry.textContent = "—";
-
-        stopLoss.textContent = "—";
-
-        target.textContent = "—";
-
+        entry.textContent = "—"; stopLoss.textContent = "—"; target.textContent = "—";
         return;
     }
 
+    const mid = (high + low) / 2;
+    const range = (high - low) * 0.3;
+    const simulatedEntry = mid;
+    const simulatedStop = market.direction === "BULLISH"? mid - range : mid + range;
+    const simulatedTarget = market.direction === "BULLISH"? mid + range * 2 : mid - range * 2;
 
-    const simulatedEntry = 101800;
-
-    const simulatedStop = 100900;
-
-    const simulatedTarget = 104500;
-
-
-    entry.textContent =
-        formatPrice(simulatedEntry);
-
-    stopLoss.textContent =
-        formatPrice(simulatedStop);
-
-    target.textContent =
-        formatPrice(simulatedTarget);
+    entry.textContent = formatPrice(simulatedEntry, decimals);
+    stopLoss.textContent = formatPrice(simulatedStop, decimals);
+    target.textContent = formatPrice(simulatedTarget, decimals);
 }
-
-
-/*
-    EXPLANATION
-*/
 
 function updateExplanation(market) {
-
-    const explanation =
-        document.getElementById("explanation");
-
-
-    if (!market.fibZone) {
-
-        explanation.textContent =
-            "Price is not inside the required Fibonacci area.";
-
-        return;
-    }
-
-
-    if (!market.liquidityManipulation) {
-
-        explanation.textContent =
-            "The Fibonacci condition is present, but liquidity manipulation has not been detected.";
-
-        return;
-    }
-
-
-    if (!market.liquiditySweep) {
-
-        explanation.textContent =
-            "Manipulation is present, but the required liquidity sweep has not been detected.";
-
-        return;
-    }
-
-
-    if (!market.marketStructureShift) {
-
-        explanation.textContent =
-            "The liquidity sweep occurred, but a market structure shift has not been confirmed.";
-
-        return;
-    }
-
-
-    if (!market.displacement) {
-
-        explanation.textContent =
-            "Market structure shifted, but displacement has not been confirmed.";
-
-        return;
-    }
-
-
-    if (!market.secondFibZone) {
-
-        explanation.textContent =
-            "The initial confirmation exists, but price has not returned to the second Fibonacci zone.";
-
-        return;
-    }
-
-
-    if (!market.finalConfirmation) {
-
-        explanation.textContent =
-            "The setup has reached the final stage, but final price-action confirmation is still missing. WAIT.";
-
-        return;
-    }
-
-
-    explanation.textContent =
-        "All defined conditions have been satisfied in the simulation.";
+    const explanation = document.getElementById("explanation");
+    const asset = market.asset;
+    if (!market.fibZone) { explanation.textContent = `${asset}: Price is not inside the required Fibonacci area.`; return; }
+    if (!market.liquidityManipulation) { explanation.textContent = `${asset}: Inside Fib zone, but liquidity manipulation not detected.`; return; }
+    if (!market.liquiditySweep) { explanation.textContent = `${asset}: Manipulation present, waiting for liquidity sweep.`; return; }
+    if (!market.marketStructureShift) { explanation.textContent = `${asset}: Sweep occurred, waiting for Market Structure Shift.`; return; }
+    if (!market.displacement) { explanation.textContent = `${asset}: MSS confirmed, waiting for displacement.`; return; }
+    if (!market.secondFibZone) { explanation.textContent = `${asset}: Displacement confirmed, waiting for return to second Fib zone.`; return; }
+    if (!market.finalConfirmation) { explanation.textContent = `${asset}: At second Fib zone, waiting for final price-action confirmation. WAIT.`; return; }
+    explanation.textContent = `${asset}: ${market.direction} - All defined conditions satisfied in the simulation.`;
 }
 
-
-/*
-    PRICE FORMATTER
-*/
-
-function formatPrice(value) {
-
-    return new Intl.NumberFormat(
-        "en-US",
-        {
-            maximumFractionDigits: 2
-        }
-    ).format(value);
+function formatPrice(value, decimals) {
+    return new Intl.NumberFormat("en-US", { minimumFractionDigits: decimals, maximumFractionDigits: decimals }).format(value);
 }
