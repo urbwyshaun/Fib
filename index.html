@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Pluto Analysis</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <header>
+        <div>
+            <h1>PLUTO ANALYSIS</h1>
+            <p>Market Structure & Confirmation Engine</p>
+        </div>
+
+        <div class="status-dot">
+            <span></span>
+            SIMULATION
+        </div>
+    </header>
+
+
+    <main>
+
+        <!-- MARKET -->
+        <section class="card">
+
+            <div class="section-title">
+                <h2>Market</h2>
+            </div>
+
+            <div class="market-controls">
+
+                <div>
+                    <label>Asset</label>
+
+                    <select id="asset">
+                        <option>BTC/USD</option>
+                        <option>EUR/USD</option>
+                        <option>GBP/USD</option>
+                        <option>XAU/USD</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label>Analysis</label>
+
+                    <button id="analyzeButton">
+                        ANALYZE MARKET
+                    </button>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- TIMEFRAMES -->
+        <section class="card">
+
+            <div class="section-title">
+                <h2>Multi-Timeframe Structure</h2>
+            </div>
+
+            <div class="timeframes">
+
+                <div class="timeframe">
+                    <span>4H</span>
+                    <strong id="tf4h">BULLISH</strong>
+                </div>
+
+                <div class="timeframe">
+                    <span>1H</span>
+                    <strong id="tf1h">BULLISH</strong>
+                </div>
+
+                <div class="timeframe">
+                    <span>15M</span>
+                    <strong id="tf15m">NEUTRAL</strong>
+                </div>
+
+                <div class="timeframe">
+                    <span>5M</span>
+                    <strong id="tf5m">WAITING</strong>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- MAIN FIBONACCI -->
+        <section class="card">
+
+            <div class="section-title">
+                <h2>Main Fibonacci</h2>
+            </div>
+
+            <div class="fib-grid">
+
+                <div>
+                    <span>Direction</span>
+                    <strong id="fibDirection">BULLISH</strong>
+                </div>
+
+                <div>
+                    <span>0%</span>
+                    <strong id="fib0">105,000</strong>
+                </div>
+
+                <div>
+                    <span>61.8%</span>
+                    <strong id="fib618">101,910</strong>
+                </div>
+
+                <div>
+                    <span>80.9%</span>
+                    <strong id="fib809">100,955</strong>
+                </div>
+
+                <div>
+                    <span>100%</span>
+                    <strong id="fib100">100,000</strong>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- CONFIRMATION ENGINE -->
+        <section class="card">
+
+            <div class="section-title">
+                <h2>Confirmation Engine</h2>
+            </div>
+
+            <div class="confirmation-list">
+
+                <div class="condition">
+                    <span>Main Fibonacci zone</span>
+                    <strong id="fibCondition">WAITING</strong>
+                </div>
+
+                <div class="condition">
+                    <span>Liquidity manipulation</span>
+                    <strong id="liquidityCondition">WAITING</strong>
+                </div>
+
+                <div class="condition">
+                    <span>Liquidity sweep</span>
+                    <strong id="sweepCondition">WAITING</strong>
+                </div>
+
+                <div class="condition">
+                    <span>Market Structure Shift</span>
+                    <strong id="mssCondition">WAITING</strong>
+                </div>
+
+                <div class="condition">
+                    <span>Displacement</span>
+                    <strong id="displacementCondition">WAITING</strong>
+                </div>
+
+                <div class="condition">
+                    <span>Second Fibonacci zone</span>
+                    <strong id="secondFibCondition">WAITING</strong>
+                </div>
+
+                <div class="condition">
+                    <span>Final confirmation</span>
+                    <strong id="finalCondition">WAITING</strong>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- SETUP -->
+        <section class="setup-card">
+
+            <div class="setup-header">
+
+                <div>
+                    <p>SETUP STATUS</p>
+                    <h2 id="setupStatus">WAITING</h2>
+                </div>
+
+                <div class="setup-icon" id="setupIcon">
+                    —
+                </div>
+
+            </div>
+
+            <div class="setup-message" id="setupMessage">
+                Waiting for market conditions to develop.
+            </div>
+
+        </section>
+
+
+        <!-- PAPER TRADE CALCULATOR -->
+        <section class="card">
+
+            <div class="section-title">
+                <h2>Paper Trade Levels</h2>
+            </div>
+
+            <div class="levels">
+
+                <div>
+                    <span>Entry</span>
+                    <strong id="entry">—</strong>
+                </div>
+
+                <div>
+                    <span>Stop Loss</span>
+                    <strong id="stopLoss">—</strong>
+                </div>
+
+                <div>
+                    <span>Target</span>
+                    <strong id="target">—</strong>
+                </div>
+
+            </div>
+
+            <p class="warning">
+                Simulation only — no real-money execution.
+            </p>
+
+        </section>
+
+
+        <!-- EXPLANATION -->
+        <section class="card">
+
+            <div class="section-title">
+                <h2>Engine Explanation</h2>
+            </div>
+
+            <p id="explanation">
+                Run the analysis engine to see what the system detects.
+            </p>
+
+        </section>
+
+    </main>
+
+
+    <footer>
+        Pluto Analysis • Version 1 • Educational Simulation
+    </footer>
+
+
+    <script src="app.js"></script>
+
+</body>
+</html>
